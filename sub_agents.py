@@ -1,13 +1,8 @@
-from agents import Agent, AgentOutputSchema
-from configuration_files.gemini_config import gemini_configuration
+from agents import Agent
+from gemini_config import gemini_configuration
 from context import UserSessionContext
-from agents_as_tools import agents_as_tools
 
-def sub_agents():
-
-    goal_analyzer, meal_planner, task_scheduler, goal_tracker, workout_recommender = agents_as_tools()
-    """This function returns the sub-agents used in the main agent."""
-    # Get the configuration for the agents
+def sub_agents(goal_analyzer, meal_planner, task_scheduler, goal_tracker, workout_recommender):
     config = gemini_configuration()
     model = config.model
 
@@ -21,7 +16,6 @@ def sub_agents():
             "subtasks and delegate to the appropriate specialized agents or tools."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             goal_analyzer.as_tool(
                 tool_name="goal_analyzer",
@@ -58,7 +52,6 @@ def sub_agents():
             "workout_recommender_tool and goal_tracker_tool. Use them as needed to assist in providing support to the user."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             workout_recommender.as_tool(
                 tool_name="workout_recommender",
@@ -81,7 +74,6 @@ def sub_agents():
             "a medical professional if needed for complex cases or medical conditions."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             goal_analyzer.as_tool(
                 tool_name="goal_analyzer",

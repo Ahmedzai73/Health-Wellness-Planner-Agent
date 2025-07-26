@@ -12,6 +12,12 @@ gemini_api_key = os.getenv("GEMINI_API_KEY")
 gemini_model_name = os.getenv("GEMINI_MODEL_NAME")
 gemini_base_url = os.getenv("GEMINI_BASE_URL")
 
+
+# gemini_api_key = GEMINI_API_KEY="AIzaSyDEplkMs2UsCOgDslqKBTClrq6AFfNCGPE"
+# gemini_model_name = GEMINI_MODEL_NAME="gemini 2.0-flash"
+# gemini_base_url = GEMINI_BASE_URL="https://generativelanguage.googleapis.com/v1beta/openai"
+
+
 # Validate that all required environment variables are set
 if not gemini_api_key or not gemini_model_name or not gemini_base_url:
     raise ValueError(
@@ -42,7 +48,7 @@ def gemini_configuration():
     config = RunConfig(
         model=model,
         model_provider=external_client,
-        tracing_disabled=True  # Disable tracing for this configuration
+        tracing_disabled=True,
     )
 
     return config
