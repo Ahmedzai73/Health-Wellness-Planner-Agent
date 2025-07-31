@@ -1,22 +1,19 @@
 from agents import Agent
-from gemini_config import gemini_configuration
-from context import UserSessionContext
+from openai_config import OPENAI_MODEL
 
 
 def agents_as_tools():
     """
     Returns a tuple of Agent instances that can be used as tools.
     """
-    config = gemini_configuration()
-    model = config.model
+    model = OPENAI_MODEL
 
     goal_analyzer = Agent(
         name="goal_analyzer",
         instructions=(
             "Convert the user's goal into a structured format. Break down the goal into key components: "
             "objective, success criteria, required resources, timeline, and potential risks. Organize the "
-            "information in a clear, standardized template for easy understanding and implementation. "
-            "Update the 'goal' field in the UserSessionContext."
+            "information in a clear, standardized template for easy understanding and implementation."
         ),
         handoff_description=(
             "Analyzes user goals and structures them into key components for clarity and implementation."
@@ -30,8 +27,7 @@ def agents_as_tools():
             "Generate a comprehensive 7-day meal plan that strictly adheres to the user's dietary preferences "
             "and restrictions. For each day, provide breakfast, lunch, dinner, and snack options. Include detailed "
             "recipes, ingredient lists, nutritional information, and preparation instructions. Ensure the plan is "
-            "balanced, healthy, and meets the user's specific nutritional requirements. Update the 'meal_plan' field "
-            "in the UserSessionContext."
+            "balanced, healthy, and meets the user's specific nutritional requirements."
         ),
         handoff_description=(
             "Creates a detailed 7-day meal plan with recipes, nutritional info, and preparation steps based on user "
@@ -59,8 +55,7 @@ def agents_as_tools():
         name="goal_tracker",
         instructions=(
             "Track the progress of user's goals and tasks. Monitor completion status, identify delays or bottlenecks, and "
-            "provide regular updates. Suggest adjustments to timelines or resources as needed to keep goals on track. "
-            "Update the 'progress_logs' field in the UserSessionContext."
+            "provide regular updates. Suggest adjustments to timelines or resources as needed to keep goals on track."
         ),
         handoff_description=(
             "Monitors goal and task progress, identifies issues, and suggests adjustments to maintain momentum."
@@ -73,8 +68,7 @@ def agents_as_tools():
         instructions=(
             "Analyze the user's fitness goals, current fitness level, and preferences to recommend personalized workout plans. "
             "Consider factors like available equipment, time constraints, and any physical limitations. Provide clear, "
-            "structured workout routines with proper exercise descriptions, sets, reps, and rest periods. Update the "
-            "'workout_plan' field in the UserSessionContext."
+            "structured workout routines with proper exercise descriptions, sets, reps, and rest periods."
         ),
         handoff_description=(
             "Recommends personalized workout plans based on user goals, fitness level, and preferences."
