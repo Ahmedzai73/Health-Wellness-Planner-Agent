@@ -1,15 +1,26 @@
-from agents import Agent, AgentOutputSchema, AgentOutputSchemaBase
+from agents import Agent
 from openai_config import OPENAI_MODEL
 from agents_as_tools import agents_as_tools
 from sub_agents import sub_agents
 from context import UserSessionContext
+from context_tools import(
+            Get_username,
+            Get_user_goal,
+            Get_user_diet_preferences,
+            Get_user_workout_plan,
+            Get_user_meal_plan,
+            Get_user_injury_notes,
+            Get_user_handoff_logs,
+            Get_user_progress_logs
+       )
 
-def main_agent():
+def main_agent():   
     """
     Initializes and configures the entire agent architecture.
     The output of this agent will be in a structured format (JSON-like).
     """
     model = OPENAI_MODEL
+    
 
     # Get tool agents
     goal_analyzer, meal_planner, task_scheduler, goal_tracker, workout_recommender = agents_as_tools()
@@ -22,16 +33,23 @@ def main_agent():
         workout_recommender,
     )
 
-    main_agent_instance = Agent(
+    main_agent_instance = Agent[UserSessionContext](
         name="main_agent",
         instructions=(
-            "Your role is 'Main Agent', the primary interface responsible for expertly and empathetically routing user requests to the appropriate specialist agent. Your communication must be consistently respectful, professional, and human-like.\n\n"
-            "Your core mission is to analyze the user's initial query and handoff the conversation to the most suitable specialist. Always address the user by their name (if provided) and demonstrate courteous professionalism.\n\n"
+            "You are the 'Main Agent'. Whenever you receive new information or updates from the user, you must update the context accordingly. Always update the context. Your job is to analyze the user's initial query and route the conversation to the most suitable specialist agent. Address the user by their name if available, and always communicate in a respectful, professional, and human-like manner."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         handoffs=[escalation_agent, injury_support_agent, nutrition_expert_agent],
-        tools=[],
+        tools=[
+            Get_username,
+            Get_user_goal,
+            Get_user_diet_preferences,
+            Get_user_workout_plan,
+            Get_user_meal_plan,
+            Get_user_injury_notes,
+            Get_user_handoff_logs,
+            Get_user_progress_logs
+        ],
     )
 
     return main_agent_instance

@@ -1,4 +1,4 @@
-from agents import Agent, AgentOutputSchema, AgentOutputSchemaBase
+from agents import Agent
 from openai_config import OPENAI_MODEL
 from context import UserSessionContext
 
@@ -11,7 +11,7 @@ def sub_agents(
 ):
     model = OPENAI_MODEL
 
-    escalation_agent = Agent(
+    escalation_agent = Agent[UserSessionContext](
         name="escalation_agent",
         instructions=(
             "ROLE: You are the 'Escalation Agent', a master controller ensuring every user inquiry is handled with the highest standard of safety, accuracy, and intelligence.\n\n"
@@ -45,7 +45,7 @@ def sub_agents(
             "- Operate with full transparency, explaining your actions and routing decisions."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
+        # output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             goal_analyzer.as_tool(
                 tool_name="goal_analyzer",
@@ -67,10 +67,11 @@ def sub_agents(
                 tool_name="workout_recommender",
                 tool_description="Recommends personalized workouts."
             ),
+           
         ],
     )
 
-    injury_support_agent = Agent(
+    injury_support_agent = Agent[UserSessionContext](
         name="injury_support_agent",
         instructions=(
             "ROLE: You are the 'Injury Support Agent', a compassionate and knowledgeable assistant focused on helping users manage and recover from physical injuries safely.\n\n"
@@ -103,7 +104,7 @@ def sub_agents(
             "- Never speculate or provide information that could be construed as a medical diagnosis or treatment plan."
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
+        # output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             workout_recommender.as_tool(
                 tool_name="workout_recommender",
@@ -120,7 +121,7 @@ def sub_agents(
         ],
     )
 
-    nutrition_expert_agent = Agent(
+    nutrition_expert_agent = Agent[UserSessionContext](
         name="nutrition_expert_agent",
         instructions=(
             "ROLE: You are the 'Nutrition Expert Agent', an intelligent assistant specializing in personalized nutritional guidance and goal-based meal planning.\n\n"
@@ -153,7 +154,7 @@ def sub_agents(
             
         ),
         model=model,
-        output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
+        # output_type=AgentOutputSchema(UserSessionContext, strict_json_schema=False),
         tools=[
             goal_analyzer.as_tool(
                 tool_name="goal_analyzer",
@@ -166,7 +167,7 @@ def sub_agents(
             meal_planner.as_tool(
                 tool_name="meal_planner",
                 tool_description="Creates personalized meal plans for health targets."
-            ),
+            ),  
         ],
     )
 
