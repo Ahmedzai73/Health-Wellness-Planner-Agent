@@ -4,18 +4,19 @@ from main_agent import main_agent
 import asyncio
 from context import UserSessionContext
 
+print("""
+      
+----------------------------------------------------------------------------------
+Welcome to the Health & Wellness Assistant.
+To get started, may I kindly request you to provide your details?
+Your information will help me serve you better and support your wellness journey.
+----------------------------------------------------------------------------------
+
+""")
 
 
 
 async def main():
-    
-    print("""
-    ------------------------------------------------------------------
-    Welcome to the Health & Wellness Assistant.
-    To get started, may I kindly request you to provide your details?
-    Your information will help me serve you better and support your wellness journey.
-    ------------------------------------------------------------------
-    """)
     
     while True:
         input_name = input("Please enter your name: ").strip()
