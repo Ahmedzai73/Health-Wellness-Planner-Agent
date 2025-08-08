@@ -1,8 +1,9 @@
-from agents import Agent
+from agents import Agent, InputGuardrail, OutputGuardrail
 from openai_config import OPENAI_MODEL
 from agents_as_tools import agents_as_tools
 from sub_agents import sub_agents
 from context import UserSessionContext
+from guardrails import Health_and_Wellness_input_relevance_guardrail, Health_and_Wellness_output_relevance_guardrail
 from context_tools import(
             Get_username,
             Get_user_goal,
@@ -23,10 +24,8 @@ def main_agent():
     """
     model = OPENAI_MODEL
     
-
-    # Get tool agents
     goal_analyzer, meal_planner, task_scheduler, goal_tracker, workout_recommender = agents_as_tools()
-    # Get sub agents
+
     escalation_agent, injury_support_agent, nutrition_expert_agent = sub_agents(
         goal_analyzer,
         meal_planner,
@@ -71,6 +70,8 @@ def main_agent():
         ),
         model=model,
         handoffs=[escalation_agent, injury_support_agent, nutrition_expert_agent],
+        input_guardrails=[InputGuardrail(guardrail_function=Health_and_Wellness_input_relevance_guardrail)],
+        output_guardrails=[OutputGuardrail(guardrail_function=Health_and_Wellness_output_relevance_guardrail)],
         tools=[
             Get_username,
             Get_user_goal,

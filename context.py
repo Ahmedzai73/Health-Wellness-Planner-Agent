@@ -13,5 +13,3 @@ class UserSessionContext(BaseModel):
     handoff_logs: List[str] = []
     progress_logs: List[str] = []
     
-
-    
