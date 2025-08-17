@@ -1,4 +1,4 @@
-from agents import Agent
+from agents import Agent, ModelSettings
 from openai_config import OPENAI_MODEL
 from context import UserSessionContext
 
@@ -12,7 +12,7 @@ def sub_agents(
     model = OPENAI_MODEL
 
     escalation_agent = Agent[UserSessionContext](
-        name="escalation_agent",
+        name="Escalation Agent",
         instructions=(
             "ROLE: Professional Escalation & Complex Query Specialist\n\n"
             "You are the expert handler for complex, sensitive, and ambiguous user requests in the health and wellness domain. "
@@ -73,10 +73,11 @@ def sub_agents(
                 tool_description="Professionally recommends personalized workouts."
             ),
         ],
+        model_settings=ModelSettings(temperature=0.1)
     )
 
     injury_support_agent = Agent[UserSessionContext](
-        name="injury_support_agent",
+        name="Injury Support Agent",
         instructions=(
             "ROLE: Professional Injury Support & Recovery Specialist\n\n"
             "You are a highly specialized assistant focused on providing safe, evidence-based support for users with injuries "
@@ -129,10 +130,11 @@ def sub_agents(
                 tool_description="Professionally suggests meal plans to support injury recovery."
             ),
         ],
+        model_settings=ModelSettings(temperature=0.1)
     )
 
     nutrition_expert_agent = Agent[UserSessionContext](
-        name="nutrition_expert_agent",
+        name="Nutrition Expert Agent",
         instructions=(
             "ROLE: Professional Nutrition Expert & Dietary Specialist\n\n"
             "You are an expert nutritionist providing evidence-based dietary guidance and personalized meal planning. "
@@ -185,6 +187,7 @@ def sub_agents(
                 tool_description="Professionally creates personalized meal plans for health targets."
             ),
         ],
+        model_settings=ModelSettings(temperature=0.1)
     )
 
     return escalation_agent, injury_support_agent, nutrition_expert_agent

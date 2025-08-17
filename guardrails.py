@@ -12,53 +12,69 @@ from agents import (
     input_guardrail,
     output_guardrail,
 )
+
 model = OPENAI_MODEL
 
-class Health_and_Wellness_Output(BaseModel):
+
+class HealthAndWellnessGuardrailOutput(BaseModel):
     is_Health_and_Wellness_relevant: bool
     reasoning: str
+
 
 input_guardrail_agent = Agent(
     name="Health_and_Wellness_Input_Relevance_Check",
     instructions=(
-        "ROLE: Input Safety and Relevance Evaluator\n\n"
-        "Your task is to critically assess the user's input for the following:\n"
-        "1. **Relevance**: Determine if the input is related to health and wellness topics\n"
-        "2. **Safety**: Detect any content that is unsafe, harmful, or promotes dangerous behavior\n"
-        "3. **Appropriateness**: Confirm that the user's statements and requests are safe and responsible\n"
-        "4. **Professional Boundaries**: Ensure the input doesn't request medical diagnoses or treatment\n\n"
-        "Provide a clear, concise reasoning for your assessment. If the input is not relevant to health and wellness, mark it as not relevant and explain why."
+        "ROLE: Friendly Input Safety and Relevance Evaluator\n\n"
+        "You are a friendly assistant. Let users talk normally about health and wellness topics. "
+        "If the user's message is safe and related to health or wellness, allow it.\n\n"
+        "However, if the user asks something unsafe, dangerous, or requests medical diagnosis/treatment, "
+        "block the message and explain in clear, polite English why it cannot be processed. "
+        "Do not allow any harmful, illegal, or unsafe requests. "
+        "If the input is irrelevant, gently explain why it can't be processed.\n\n"
+        "Always be polite and supportive in your explanations."
     ),
-    output_type=Health_and_Wellness_Output,
-    model=model
+    output_type=HealthAndWellnessGuardrailOutput,
+    model=model,
 )
 
 output_guardrail_agent = Agent(
     name="Health_and_Wellness_Output_Relevance_Check",
     instructions=(
-        "ROLE: Output Safety and Professionalism Evaluator\n\n"
-        "Your responsibility is to thoroughly review the system's response to ensure it meets the highest standards:\n"
-        "1. **Relevance**: Confirm the response is related to health and wellness\n"
-        "2. **Safety**: Verify that the response is safe and doesn't encourage harmful actions\n"
-        "3. **Professionalism**: Ensure the response is appropriate and respectful\n"
-        "4. **Accuracy**: Confirm information is evidence-based and not misleading\n\n"
-        "If the response fails to meet any criteria, mark it as not relevant and provide detailed explanation."
+        "ROLE: Friendly Output Safety and Professionalism Evaluator\n\n"
+        "Review the system's response before it is shown to the user. "
+        "If the response is safe, respectful, and related to health and wellness, allow it.\n\n"
+        "If the response is unsafe, harmful, unprofessional, or gives medical diagnosis/treatment, "
+        "block it and explain in clear, polite English why it cannot be shown to the user. "
+        "Always ensure the response is evidence-based and not misleading.\n\n"
+        "If blocking, provide a gentle, supportive explanation."
     ),
-    output_type=Health_and_Wellness_Output,
-    model=model
+    output_type=HealthAndWellnessGuardrailOutput,
+    model=model,
 )
+
 
 async def Health_and_Wellness_input_relevance_guardrail(ctx, agent, input) -> GuardrailFunctionOutput:
     result = await Runner.run(input_guardrail_agent, input, context=ctx.context)
-    final_output = result.final_output_as(Health_and_Wellness_Output)
+    final_output = result.final_output_as(HealthAndWellnessGuardrailOutput)
+    if not final_output.is_Health_and_Wellness_relevant:
+        final_output.reasoning = (
+            "Sorry, I can't assist with that request as it may be unsafe or outside the boundaries of health and wellness support. "
+            "If you have another question related to health and wellness, feel free to ask!"
+        )
     return GuardrailFunctionOutput(
         output_info=final_output,
         tripwire_triggered=not final_output.is_Health_and_Wellness_relevant,
     )
 
+
 async def Health_and_Wellness_output_relevance_guardrail(ctx, agent, output) -> GuardrailFunctionOutput:
     result = await Runner.run(output_guardrail_agent, output, context=ctx.context)
-    final_output = result.final_output_as(Health_and_Wellness_Output)
+    final_output = result.final_output_as(HealthAndWellnessGuardrailOutput)
+    if not final_output.is_Health_and_Wellness_relevant:
+        final_output.reasoning = (
+            "Sorry, I can't provide that response as it may not be safe or appropriate. "
+            "Let's keep our conversation focused on safe and helpful health and wellness topics."
+        )
     return GuardrailFunctionOutput(
         output_info=final_output,
         tripwire_triggered=not final_output.is_Health_and_Wellness_relevant,
