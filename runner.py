@@ -1,8 +1,10 @@
-from agents import Runner
+from agents import Runner, RunHooks
 from openai.types.responses import ResponseTextDeltaEvent
 from main_agent import main_agent
 import asyncio
 from context import UserSessionContext
+from hooks import TestHooks
+
 
 print(
     """
@@ -17,6 +19,7 @@ Your information will help me serve you better and support your wellness journey
 
 
 async def main():
+    start_hook = TestHooks()
     while True:
         input_name = input(
             "🧑 Hi there! What name would you like me to call you by?\n📝 Your answer: "
@@ -108,6 +111,7 @@ async def main():
             agent,
             user_input_for_agent,
             context=user_record,
+            hooks=start_hook
         )
         print("🧑 ", end="", flush=True)
         async for event in result.stream_events():
